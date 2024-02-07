@@ -110,6 +110,25 @@ class user_model():
        
         return {'message':'Invalid credential.'},401
     
+
+    def ListUsers(self):
+        conn = sqlite3.connect("image_comparison.sqlite")
+        cursor = conn.cursor()
+       
+        cursor = conn.execute("SELECT * FROM users")
+        users = [
+            dict(id=row[0], username=row[1], password=row[2], userRole=row[3], emailConfirmed=row[4], createdAt=row[5])
+            for row in cursor.fetchall()
+        ]
+        
+        if users is not None:
+       
+            return {'usersList':users},200
+
+        #     return {'token':access_token},200
+       
+        return {'message':'No user.'},401
+    
         # sql = """INSERT INTO users (username, password, userRole, emailConfirmed, createdAt)
         #          VALUES (?, ?, ?, ?, ?)"""
         # cursor = cursor.execute(sql, (username, password, userRole, emailConfirmed, createdAt))

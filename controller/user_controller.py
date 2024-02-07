@@ -37,10 +37,11 @@ def Signup():
 def Login():
         return obj.Login()
 
-@app.route("/user/all")
+#@jwt_required()
+@app.route("/users")
 # The endpoint for token_auth() is automatically getting calculated in the auth_model.token_auth() method
-#@auth.token_auth()
+@jwt_required()
 def all_users():
     # res = flask.Response(obj.all_user_model())
     # res.headers["Content-type"] = "application/json"
-    return obj.all_user_model()
+    return obj.ListUsers()
