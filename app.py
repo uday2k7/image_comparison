@@ -2,10 +2,11 @@ from flask import Flask
 import dataset
 import sqlite3
 #from flask_restful import Resource, Api
+from flask_jwt_extended import create_access_token, JWTManager, get_jwt_identity, jwt_required
 
 
 app = Flask(__name__)
-
+app.config['SECRET_KEY'] = 'SUPER-SECRET-KEY'
 #app.config['SECRET_KEY'] = 'SUPER-SECRET-KEY'
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 

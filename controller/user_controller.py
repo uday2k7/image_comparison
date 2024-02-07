@@ -2,13 +2,14 @@ from app import app
 from flask import Flask, request
 from validate_email import validate_email
 from models.user_model import user_model
+from flask_jwt_extended import create_access_token, JWTManager, get_jwt_identity, jwt_required
 
-
-obj = user_model()
+jwt=JWTManager(app)
+obj = user_model(jwt)
 
 @app.route("/user/signup", methods=["POST"])
-def signup():
-        return obj.signup()
+def Signup():
+        return obj.Signup()
         # data = request.get_json()
         # username = data['username']
         # password = data['password']
@@ -32,6 +33,10 @@ def signup():
         # db.session.add(new_user)
         # db.session.commit()
         # return {'message':'User created successfully.'},200
+@app.route("/user/login", methods=["POST"])
+def Login():
+        return obj.Login()
+
 @app.route("/user/all")
 # The endpoint for token_auth() is automatically getting calculated in the auth_model.token_auth() method
 #@auth.token_auth()
