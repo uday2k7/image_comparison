@@ -1,0 +1,5 @@
+__pycache__/
+configs/__pycache__/
+controller/__pycache__/
+models/__pycache__/
+venv_image/
