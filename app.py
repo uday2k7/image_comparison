@@ -14,7 +14,7 @@ app.config['SECRET_KEY'] = 'SUPER-SECRET-KEY'
      
 @app.route("/")
 def welcome():
-    return "Hello World2"
+    return "Hello World"
 
 # @app.route("/user/signup")
 # def welcome():
