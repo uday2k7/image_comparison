@@ -49,12 +49,21 @@ class user_model():
         emailConfirmed = 0
         createdAt = datetime.datetime.now()
 
-        is_valid=validate_email(username,verify=False)
+        is_valid=validate_email(username,verify=True)
+
+        cursor.execute("SELECT username FROM users WHERE username=?", (username,))
+        rows = len(cursor.fetchall())
+        # for r in rows:
+        #     user = r
+
+        #return {'message':rows},200
 
         if not username or not password:
             return {'message':'Missing username or password.'},400
         if not is_valid:
             return {'message':'Invalid email address'},400
+        if rows > 0:
+            return {'message':'Username already exists.'},400
     
         sql = """INSERT INTO users (username, password, userRole, emailConfirmed, createdAt)
                  VALUES (?, ?, ?, ?, ?)"""
