@@ -57,7 +57,14 @@ def Login():
         password = hash_object.hexdigest() 
 
         user=User.query.filter_by(username=username).first()
-
+        data={
+            "username":user.username,
+            "token":"aa",
+            "displayname":"aa",
+            "email":"aa",
+            "role":"aa",
+            "photourl":"aa",
+        }
         if user.emailConfirmed == 0:
             return jsonify({
                 "success":False,
@@ -71,7 +78,8 @@ def Login():
             "success":True,
             "code":200,
             "message":"Login successful.",
-            "access_token":access_token
+            "access_token":access_token,
+            "data":data
         }),200
     except:
         return jsonify({
