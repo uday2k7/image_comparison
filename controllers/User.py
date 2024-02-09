@@ -9,9 +9,11 @@ from validate_email import validate_email
 
 class User(db.Model):
     __tablename__ = 'users'
-    id=db.Column(db.Integer, primary_key=True)
+    id=db.Column(db.Integer, autoincrement=True, primary_key=True)
     username=db.Column(db.String(100), unique=True, nullable=False)
     password=db.Column(db.String(100), nullable=False)
+    firstname=db.Column(db.String(100), nullable=True)
+    lastname=db.Column(db.String(100), nullable=True)
     userRole=db.Column(db.String(100), nullable=False)
     emailConfirmed=db.Column(db.Integer, default=0, nullable=False)
     createdAt=db.Column(db.String(100), nullable=False)
@@ -30,6 +32,8 @@ def create_user():
     hash_object = hashlib.sha256(password_bytes)
     password = hash_object.hexdigest()  
     userRole = data['role']
+    firstName = data['firstname']
+    lastName = data['lastname']
     
     is_valid=validate_email(username,verify=False)
 
@@ -39,7 +43,7 @@ def create_user():
         return {'message':'Invalid email address'},400
     if User.query.filter_by(username=username).first():
         return {'message':'Username already exists.'},400
-    new_user = User(username=username, password=password, userRole=userRole, emailConfirmed=0, createdAt=currentTime)
+    new_user = User(username=username, password=password, firstname=firstName, lastname=lastName, userRole=userRole, emailConfirmed=0, createdAt=currentTime)
     db.session.add(new_user)
     db.session.commit()
     
