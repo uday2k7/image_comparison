@@ -66,7 +66,7 @@ def create_user():
 #Authentication function
 @app.route("/user/login", methods=["POST"])
 def Login():
-    try:
+    # try:
         emailConfirmed = 0
         data = request.get_json()
         username = data['username']
@@ -75,23 +75,28 @@ def Login():
         password = hash_object.hexdigest() 
 
         user=User.query.filter_by(username=username).first()
-        data={
-            "username":user.username,
-            "token":"aa",
-            "displayname":"aa",
-            "email":"aa",
-            "role":"aa",
-            "photourl":"aa",
-        }
+       
+        if User.query.filter_by(username=username, password=password).count() <= 0:
+            return jsonify({
+                "success":False,
+                "code":404,
+                "message":"Invalid username or password."
+            }),200
+        
         if user.emailConfirmed == 0:
             return jsonify({
                 "success":False,
                 "code":404,
                 "message":"Please activate your account."
             }),200
-           
+        
         if user.emailConfirmed == 1 and user.password == password:
             access_token = create_access_token(identity =user.username)
+            data={
+                "username":user.username,
+                "displayname":user.firstname,
+                "role":user.userRole,
+            } 
         return jsonify({
             "success":True,
             "code":200,
@@ -99,12 +104,12 @@ def Login():
             "access_token":access_token,
             "data":data
         }),200
-    except:
-        return jsonify({
-            "success":False,
-            "code":500,
-            "message":"System encountered an unexpected problem and is being tracked.",
-        }),200
+    # except:
+    #     return jsonify({
+    #         "success":False,
+    #         "code":500,
+    #         "message":"System encountered an unexpected problem and is being tracked.",
+    #     }),200
     
 #List of all Users
 @app.route("/user/list", methods=["GET"])
