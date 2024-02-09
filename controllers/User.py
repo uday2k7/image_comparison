@@ -4,6 +4,7 @@ from app import db, app, request, jwt
 from flask import Flask, request,jsonify
 from flask_jwt_extended import create_access_token, JWTManager, get_jwt_identity, jwt_required
 from validate_email import validate_email
+from sqlalchemy import asc, desc
 
 
 
@@ -112,12 +113,18 @@ def Login():
     #     }),200
     
 #List of all Users
-@app.route("/user/list", methods=["GET"])
+@app.route("/user/list/",defaults={'userId': None}, methods=["GET"])
+@app.route("/user/list/<path:userId>", methods=["GET"])
 @jwt_required()
-def list_user():
+def list_user(userId):
     try:
-        query=User.query.all()
-        users = [
+        userQuery=User.query
+        if userId!=None:
+            userQuery=userQuery.filter_by(id=userId)
+        
+        userQuery = userQuery.order_by(asc(User.id)).all()
+
+        userList = [
             dict(
                 id=row.id, 
                 username=row.username,
@@ -126,13 +133,13 @@ def list_user():
                 emailConfirmed=row.emailConfirmed,
                 createdAt=row.createdAt,
             )
-            for row in query
+            for row in userQuery
         ]
         return {
             "success":True,
             "code":200,
             'message':"",
-            'data':users
+            'data':userList
         },200
     except:
         return jsonify({
