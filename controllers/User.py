@@ -38,11 +38,25 @@ def create_user():
     is_valid=validate_email(username,verify=False)
 
     if not username or not password:
-        return {'message':'Missing username or password.'},400
+        return {
+            "success":False,
+            "code":400,
+            'message':"Missing username or password."
+        },400
+        
     if not is_valid:
-        return {'message':'Invalid email address'},400
+        return {
+            "success":False,
+            "code":400,
+            'message':"Invalid email address."
+        },400
+        
     if User.query.filter_by(username=username).first():
-        return {'message':'Username already exists.'},400
+        return {
+                "success":False,
+                "code":400,
+                'message':"Username already exists."
+            },400
     new_user = User(username=username, password=password, firstname=firstName, lastname=lastName, userRole=userRole, emailConfirmed=0, createdAt=currentTime)
     db.session.add(new_user)
     db.session.commit()
