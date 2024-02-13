@@ -7,6 +7,7 @@ from validate_email import validate_email
 from sqlalchemy import asc, desc
 import uuid
 import secrets
+from extras.utilities import *
 
 
 
@@ -44,9 +45,11 @@ def create_user():
     data = request.get_json()
     user_id = uuid.uuid4().hex
     username = data['username']
-    password_bytes = data['password'].encode('utf-8')
-    hash_object = hashlib.sha256(password_bytes)
-    password = hash_object.hexdigest()  
+    # password_bytes = data['password'].encode('utf-8')
+    # hash_object = hashlib.sha256(password_bytes)
+    # password = hash_object.hexdigest()  
+    password = encrypt_password(data['password'])  
+    # return password
     user_role = data['role']
     firstName = data['firstname']
     lastName = data['lastname']
@@ -86,9 +89,9 @@ def Login():
         email_confirmed = 0
         data = request.get_json()
         username = data['username']
-        password_bytes = data['password'].encode('utf-8')
-        hash_object = hashlib.sha256(password_bytes)
-        password = hash_object.hexdigest() 
+        # password_bytes = data['password'].encode('utf-8')
+        # hash_object = hashlib.sha256(password_bytes)
+        password = encrypt_password(data['password'])
 
         user=User.query.filter_by(username=username).first()
        
@@ -159,9 +162,10 @@ def change_password():
     data = request.get_json()
     username = data['username']
     token = data['token']
-    password_bytes = data['password'].encode('utf-8')
-    hash_object = hashlib.sha256(password_bytes)
-    password = hash_object.hexdigest()  
+    # password_bytes = data['password'].encode('utf-8')
+    # hash_object = hashlib.sha256(password_bytes)
+    # password = hash_object.hexdigest()  
+    password = encrypt_password(data['password'])
 
     if Usertoken.query.filter_by(reset_token=token).count():
 
