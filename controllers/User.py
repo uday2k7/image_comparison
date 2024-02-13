@@ -238,13 +238,20 @@ def change_password():
     hash_object = hashlib.sha256(password_bytes)
     password = hash_object.hexdigest()  
 
-    update_password = User.query.filter_by(username=username).one()
-    update_password.password = password
-    db.session.commit()
+    if Usertoken.query.filter_by(reset_token=token).count():
 
-    return jsonify({
-        "success":True,
-        "code":200,
-        "message":"Password updated successfully."
-    }),200
-        
+        update_password = User.query.filter_by(username=username).one()
+        update_password.password = password
+        db.session.commit()
+
+        return jsonify({
+            "success":True,
+            "code":200,
+            "message":"Password updated successfully."
+        }),200
+    else:
+        return jsonify({
+            "success":False,
+            "code":404,
+            "message":"Invalid token."
+        }),200
