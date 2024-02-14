@@ -1,6 +1,6 @@
 import datetime
 import hashlib
-from app import db, app, request, jwt
+from app import db, app, request, jwt, basedir
 from flask import Flask, request,jsonify
 from flask_jwt_extended import create_access_token, JWTManager, get_jwt_identity, jwt_required, current_user
 from validate_email import validate_email
@@ -8,6 +8,9 @@ from sqlalchemy import asc, desc
 import uuid
 import secrets
 from controllers.Auth import * 
+# import json
+import requests
+# from datetime import datetime
 
 
 
@@ -40,27 +43,113 @@ from controllers.Auth import *
 
 #List of all Users
 # @app.route("/comparion/setbaseline/",defaults={'userId': None}, methods=["GET"])
-@app.route("/comparion/setbaseline/", methods=["POST"])
+@app.route("/comparion/setbaseline/", methods=['PUT'])
 @jwt_required()
 def set_baseline():
     userDetails = get_jwt_identity()
 
-    data = request.get_json()
+    squadid = request.form['squadid']
+    applicationid = request.form['applicationid']
+    imagename = request.files['avatar']
 
-    squadid = data['squadid']
-    applicationid = data['applicationid']
-    imagename = data['imagename']
-
-    # create_directory(squadid)
+    upload_file(imagename,'files')
+    return "p"
     create_directory = create_comparison_directory(squadid,applicationid)
-    if create_directory:
-        return squadid+"--"+applicationid+"--"+imagename
+    print(create_directory)
+    # return create_directory
+    # if create_directory not 'None':
+    if (create_directory != 'None'):
+        # file = request.files['avatar']
+        return create_directory
     else:
         return {
             "success":False,
             "code":400,
-            'message':"Problem creating directory."
-        },400
+            'message':"Unable to create image."
+        },400 
+        # target = create_directory
+
+        # file = request.files['avatar']
+
+        # file_name = file.filename or ''
+
+        # destination = '/'.join([target, file_name])
+        # file.save(destination)
+        # return file_name
+
+        # return "cc"
+    # print(request.form['squadid'])
+    # return squadid+"##"+applicationid
+    # data = request.get_json()
+    # return data['squadid']
+    # target = 'files'
+    
+    # file = request.files['avatar']
+    
+    # file_name = file.filename or ''
+    
+    # destination = '/'.join([target, file_name])
+    # file.save(destination)
+    # return file_name
+    
+    # data = request.get_json()
+    # data = request.files
+
+    # uploaded_file = request.files['document']
+    # data = request.get_json()
+    # filename = secure_filename(uploaded_file.filename)
+    # uploaded_file.save(os.path.join('files', filename))
+    # print(data)
+    # return 'success'
+    # squadid = data['squadid']
+    # applicationid = data['applicationid']
+    # imagename = data['imagename']
+    #print(data)
+    # return data
+    # target = 'files'
+
+    # file = request.files['avatar']
+
+    # file_name = file.filename or ''
+
+    # destination = '/'.join([target, file_name])
+    # file.save(destination)
+    # return file_name
+    # create_directory(squadid)
+    # create_directory = create_comparison_directory(squadid,applicationid)
+    # if create_directory:
+        # target = 'files'
+
+        # file = request.files['avatar']
+
+        # file_name = file.filename or ''
+
+        # destination = '/'.join([target, file_name])
+        # file.save(destination)
+        # return file_name
+        # file = request.files['avatar']
+        # new_filename =  str(datetime.now().timestamp()).replace(".", "") # Generating unique name for the file
+        # return new_filename
+        # split_filename = file.filename.split(".") # Spliting ORIGINAL filename to seperate extenstion
+        # ext_pos = len(split_filename)-1 # Canlculating last index of the list got by splitting the filname
+        # ext = split_filename[ext_pos] # Using last index to get the file extension
+        # db_path = f"uploads/{new_filename}.{ext}"
+        # file.save(f"uploads/{new_filename}.{ext}")
+        # return new_filename
+        # return obj.upload_avatar_model(uid, db_path)
+        # post(imagename)
+        # return squadid+"--"+applicationid+"--"+imagename
+    
+        # def get_avatar(uid):
+        # data = obj.get_avatar_path_model(uid)
+        # root_dir = os.path.dirname(app.instance_path)
+        # return send_file(f"{root_dir}{data['payload'][0]['avatar']}")
+    # else:
+    #     return {
+    #         "success":False,
+    #         "code":400,
+    #         'message':"Problem creating directory."
+    #     },400
     # create_directory(squadid+"/"+applicationid+"/Actuals")
     
     # current_roles = current_user()
