@@ -173,6 +173,8 @@ def change_password():
         update_password.password = password
         db.session.commit()
 
+        Usertoken.query.filter_by(user_email = username).delete()
+        db.session.commit()
         return jsonify({
             "success":True,
             "code":200,
