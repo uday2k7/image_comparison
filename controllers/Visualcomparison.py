@@ -39,54 +39,30 @@ from controllers.Auth import *
 
 
 #List of all Users
-@app.route("/user/list/",defaults={'userId': None}, methods=["GET"])
-@app.route("/user/list/<path:userId>", methods=["GET"])
+# @app.route("/comparion/setbaseline/",defaults={'userId': None}, methods=["GET"])
+@app.route("/comparion/setbaseline/", methods=["POST"])
 @jwt_required()
-def list_user(userId):
-    userDetails = get_jwt_identity()
-    # current_roles = current_user()
-    # return {'role':userDetails['role'],'user':userDetails['user']},200
-    try:
-        userQuery=User.query
-        if userId!=None:
-            userQuery=userQuery.filter_by(user_id=userId).all()
-        if userDetails['role'] == "Admin":
-            userQuery = userQuery.order_by(asc(User.user_id)).all()
-
-        userList = [
-            dict(
-                user_id=row.user_id, 
-                username=row.username,
-                password=row.password,
-                role=row.user_role,
-                email_confirmed=row.email_confirmed,
-                created_at=row.created_at,
-            )
-            for row in userQuery
-        ]
-        return {
-            "success":True,
-            "code":200,
-            'message':"",
-            'data':userList
-        },200
-    except:
-        return jsonify({
-            "success":False,
-            "code":500,
-            "message":"System encountered an unexpected problem and is being tracked.",
-        }),200
-    
-
-#List of all Users
-# @app.route("/user/list/",defaults={'userId': None}, methods=["GET"])
-@app.route("/user/edit/<path:userId>", methods=["POST"])
-@jwt_required()
-def edit_user(userId):
+def set_baseline():
     userDetails = get_jwt_identity()
 
     data = request.get_json()
-    return userDetails['user']
+
+    squadid = data['squadid']
+    applicationid = data['applicationid']
+    imagename = data['imagename']
+
+    # create_directory(squadid)
+    create_directory = create_comparison_directory(squadid,applicationid)
+    if create_directory:
+        return squadid+"--"+applicationid+"--"+imagename
+    else:
+        return {
+            "success":False,
+            "code":400,
+            'message':"Problem creating directory."
+        },400
+    # create_directory(squadid+"/"+applicationid+"/Actuals")
+    
     # current_roles = current_user()
     # return {'role':userDetails['role'],'user':userDetails['user']},200
     # try:
@@ -119,3 +95,5 @@ def edit_user(userId):
     #         "code":500,
     #         "message":"System encountered an unexpected problem and is being tracked.",
     #     }),200
+    
+
