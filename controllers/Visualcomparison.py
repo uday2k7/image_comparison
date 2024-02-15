@@ -43,24 +43,32 @@ import requests
 
 #List of all Users
 # @app.route("/comparion/setbaseline/",defaults={'userId': None}, methods=["GET"])
-@app.route("/comparion/setbaseline/", methods=['PUT'])
+@app.route("/comparion/setbaseline/", methods=['POST'])
 @jwt_required()
 def set_baseline():
     userDetails = get_jwt_identity()
 
     squadid = request.form['squadid']
     applicationid = request.form['applicationid']
-    imagename = request.files['avatar']
-
-    upload_file(imagename,'files')
-    return "p"
-    create_directory = create_comparison_directory(squadid,applicationid)
-    print(create_directory)
+    imagefile = request.files['imagefile']
+    # upload_root_path = squadid+'/'+applicationid+'/Baseline'
+    upload_root_path = 'uploads/'+squadid+'/'+applicationid
+    # create_directory = create_comparison_directory(squadid,applicationid)
+    create_directory = create_comparison_directory(upload_root_path)
+    # return create_directory
+    # upload_file(imagename,'uploads/squadid2/applicationid2/Baseline')
+    # return "p"
+    # create_directory = create_comparison_directory(squadid,applicationid)
+    # print(create_directory)
     # return create_directory
     # if create_directory not 'None':
     if (create_directory != 'None'):
-        # file = request.files['avatar']
-        return create_directory
+        upload_file(imagefile,create_directory)
+        return {
+            "success":True,
+            "code":200,
+            'message':"Baseline created successfully."
+        },200 
     else:
         return {
             "success":False,

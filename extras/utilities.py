@@ -10,24 +10,42 @@ def encrypt_password(password):
 
     return password
 
-def create_comparison_directory(squad,application):
+def create_comparison_directory(root_path):
     # list = ['Baseline','Actuals']
-    basedir = "uploads/"+squad+"/"+application+"/Baseline"
-    actualdir = "uploads/"+squad+"/"+application+"/Actuals"
+    # basedir = "uploads/"+squad+"/"+application+"/Baseline"
+    basedir = root_path+"/Baseline"
+    # actualdir = "uploads/"+squad+"/"+application+"/Actuals"
+    actualdir = root_path+"/Actuals"
 
-    basedirstatus=False
-    actualdirstatus=False
+    # basedirstatus=False
+    # actualdirstatus=False
     if not os.path.isdir(basedir): 
-        basedirstatus = os.makedirs(basedir)
-        basedirstatus=True
+        os.makedirs(basedir)
+        # basedirstatus=True
+    # else:
+    #     basedirstatus=False
+
     if not os.path.isdir(actualdir): 
-        actualdirstatus = os.makedirs(actualdir)
-        actualdirstatus=True
-    
-    if basedirstatus==True and actualdirstatus == True:
-        return create_comparison_directory
+        os.makedirs(actualdir)
+        # actualdirstatus=True
+    # else:
+    #      actualdirstatus=False
+
+    if os.path.exists(basedir) and os.path.exists(actualdir):
+        return basedir
     else:
         return 'None'
+
+    # if os.path.isdir(basedir) and os.path.isdir(actualdir):
+    #     return 'error'
+    # else:
+    #     basedirstatus = os.makedirs(basedir)
+    #     actualdirstatus = os.makedirs(actualdir)
+    #     return basedir
+    # if basedirstatus==True and actualdirstatus == True:
+    #     return basedir
+    # else:
+    #     return 'None'
 
 # def uploadimage(self):
 #         parse = reqparse.RequestParser()
