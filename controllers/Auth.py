@@ -15,7 +15,7 @@ from extras.uploadfile import *
 class User(db.Model):
     __tablename__ = 'users'
     # user_id=db.Column(db.Integer, autoincrement=True, primary_key=True)
-    user_id=db.Column(db.String(100), unique=True, nullable=False, primary_key=True)
+    user_id=db.Column(db.Integer, unique=True, nullable=False, primary_key=True,autoincrement=True)
     username=db.Column(db.String(100), unique=True, nullable=False)
     password=db.Column(db.String(100), nullable=False)
     firstname=db.Column(db.String(100), nullable=True)
@@ -26,6 +26,8 @@ class User(db.Model):
 
 with app.app_context():
     db.create_all()
+
+
 
 class Usertoken(db.Model):
     __tablename__ = 'user_tokens'
@@ -42,9 +44,12 @@ with app.app_context():
 #Function to create user
 @app.route('/user/signup', methods=['POST'])
 def create_user():
+    # pk = os.urandom(24)
+    # return pk
+    # return os.getenv('UDAY')
     currentTime = datetime.datetime.now()
     data = request.get_json()
-    user_id = uuid.uuid4().hex
+    # user_id = uuid.uuid4().hex
     username = data['username']
     # password_bytes = data['password'].encode('utf-8')
     # hash_object = hashlib.sha256(password_bytes)
@@ -77,7 +82,7 @@ def create_user():
                 "code":400,
                 'message':"Username already exists."
             },400
-    new_user = User(user_id=user_id, username=username, password=password, firstname=firstName, lastname=lastName, user_role=user_role, email_confirmed=0, created_at=currentTime)
+    new_user = User(username=username, password=password, firstname=firstName, lastname=lastName, user_role=user_role, email_confirmed=0, created_at=currentTime)
     db.session.add(new_user)
     db.session.commit()
     

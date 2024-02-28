@@ -8,114 +8,27 @@ from sqlalchemy import asc, desc
 import uuid
 import secrets
 from controllers.Auth import * 
+from controllers.Squad import * 
 
-
-
-# class User(db.Model):
-#     __tablename__ = 'users'
-#     # user_id=db.Column(db.Integer, autoincrement=True, primary_key=True)
-#     user_id=db.Column(db.String(100), unique=True, nullable=False, primary_key=True)
-#     username=db.Column(db.String(100), unique=True, nullable=False)
-#     password=db.Column(db.String(100), nullable=False)
-#     firstname=db.Column(db.String(100), nullable=True)
-#     lastname=db.Column(db.String(100), nullable=True)
-#     user_role=db.Column(db.String(100), nullable=False)
-#     email_confirmed=db.Column(db.Integer, default=0, nullable=False)
-#     created_at=db.Column(db.String(100), nullable=False)
-
-# with app.app_context():
-#     db.create_all()
-
-# class Usertoken(db.Model):
-#     __tablename__ = 'user_tokens'
-#     # user_id=db.Column(db.Integer, autoincrement=True, primary_key=True)
-#     user_id=db.Column(db.String(100), nullable=False, primary_key=True)
-#     user_email=db.Column(db.String(100), nullable=False)
-#     reset_token=db.Column(db.String(100), nullable=False)
-#     requested_on=db.Column(db.String(100), nullable=True)
-
-# with app.app_context():
-#     db.create_all()
 
 
 #List of all Users
-@app.route("/user/list/",defaults={'userId': None}, methods=["GET"])
-@app.route("/user/list/<path:userId>", methods=["GET"])
-@jwt_required()
-def list_user(userId):
-    userDetails = get_jwt_identity()
-    # current_roles = current_user()
-    # return {'role':userDetails['role'],'user':userDetails['user']},200
-    try:
-        userQuery=User.query
-        if userId!=None:
-            userQuery=userQuery.filter_by(user_id=userId).all()
-        if userDetails['role'] == "Admin":
-            userQuery = userQuery.order_by(asc(User.user_id)).all()
+@app.route("/usersquad/list/",defaults={'userId': None}, methods=["GET"])
 
+def list_user(userId):   
+        userQuery=db.session.query(Usersquad)
+        userQuery = userQuery.join(User,Usersquad.user_id == User.user_id)
+        userQuery = userQuery.join(Squad,Usersquad.squad_id == Squad.squad_id)
+        
         userList = [
             dict(
-                user_id=row.user_id, 
-                username=row.username,
-                password=row.password,
-                role=row.user_role,
-                email_confirmed=row.email_confirmed,
-                created_at=row.created_at,
+                user_squad_id=row.user_squad_id,
+                user_id=row.user_id,
+                squad_id=row.squad_id,
+                # squad_name=row.squad_name,
             )
             for row in userQuery
         ]
         return {
-            "success":True,
-            "code":200,
-            'message':"",
             'data':userList
         },200
-    except:
-        return jsonify({
-            "success":False,
-            "code":500,
-            "message":"System encountered an unexpected problem and is being tracked.",
-        }),200
-    
-
-#List of all Users
-# @app.route("/user/list/",defaults={'userId': None}, methods=["GET"])
-@app.route("/user/edit/<path:userId>", methods=["POST"])
-@jwt_required()
-def edit_user(userId):
-    userDetails = get_jwt_identity()
-
-    data = request.get_json()
-    return userDetails['user']
-    # current_roles = current_user()
-    # return {'role':userDetails['role'],'user':userDetails['user']},200
-    # try:
-    #     userQuery=User.query
-    #     if userId!=None:
-    #         userQuery=userQuery.filter_by(user_id=userId).all()
-    #     if userDetails['role'] == "Admin":
-    #         userQuery = userQuery.order_by(asc(User.user_id)).all()
-
-    #     userList = [
-    #         dict(
-    #             user_id=row.user_id, 
-    #             username=row.username,
-    #             password=row.password,
-    #             role=row.user_role,
-    #             email_confirmed=row.email_confirmed,
-    #             created_at=row.created_at,
-    #         )
-    #         for row in userQuery
-    #     ]
-    #     return {
-    #         "success":True,
-    #         "code":200,
-    #         'message':"",
-    #         'data':userList
-    #     },200
-    # except:
-    #     return jsonify({
-    #         "success":False,
-    #         "code":500,
-    #         "message":"System encountered an unexpected problem and is being tracked.",
-    #     }),200
